@@ -1,0 +1,17 @@
+{
+  "name": "tcp-emit-server",
+  "version": "0.0.1",
+  "description": "TCP Socket Server Based Event Emitter",
+  "main": "tcp-emit-server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "tcp",
+    "ip",
+    "event",
+    "emitter"
+  ],
+  "author": "CB BEZUIDENHOUT",
+  "license": "GPLv3"
+}
