@@ -1,5 +1,5 @@
 # tcp-emit-server
-#### v0.0.1a ~ Seriously just mushed this together, still needs proper testing. And still busy doing active work on it. 
+#### v0.0.2a ~ Seriously just mushed this together, still needs proper testing. And still busy doing active work on it. 
 
 _This module works in conjunction with tcp-emit-client.js_
 
