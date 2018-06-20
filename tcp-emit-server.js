@@ -42,7 +42,7 @@ function cleanup(id){
 var socket = function () {};
 util.inherits(socket, SocketEmitter);
 var sc = '';
-var ec = '';
+var ec = '\r\n';
 var fileHolders = []; 
 var file = function (fn) {
     this.filename = fn;
@@ -89,15 +89,13 @@ var _f = {
         try {
             server = net.createServer(function (s) {
                 (function(){
-                    
                     var sobj = {};
                     sobj.id = makeid();
                     rawsockets[sobj.id] = s;
                     sockets[sobj.id] = sobj;
                     var id = sobj.id;
-
                     sockets[id] = new socket();
-                    sockets[id].id = id
+                    sockets[id].id = id;
                     sockets[id].oldEmit = sockets[id].emit;
                     sockets[id].ipaddress = s.remoteAddress;
                     sockets[id].ipport = s.remotePort;
@@ -139,11 +137,9 @@ var _f = {
                                 rawsockets[sockets[id].id].write(`^d${brStr}${file}${brStr}${b}`);
                             });
                             rs.on('close', function () {
-                                console.log('file closed');
                                 setTimeout(function () {
                                     rawsockets[sockets[id].id].write(`^c${brStr}${file}`);
                                 }, 500);
-
                             });
                         }catch(e){}
                         
@@ -195,29 +191,6 @@ var _f = {
                                 }
 
                         }
-                        if (d.length == 2) {
-                            var evt = d[0];
-                            var sendData = d[1];
-                            try {sendData = JSON.parse(sendData);}
-                            catch (e) { }
-                            sockets[id].oldEmit(evt, sendData);
-                        }
-                        if (d.length == 3) {
-                            var evt = d[0];
-                            var sendData = d[1], sendData2 = d[2];
-                            try { sendData = JSON.parse(sendData);}catch (e) { }
-                            try {sendData2 = JSON.parse(sendData2);}catch (e) { }
-                            sockets[id].oldEmit(evt, sendData,sendData2);
-                        }
-                        if (d.length == 4) {
-                            var evt = d[0];
-                            var sendData = d[1], sendData2 = d[2], sendData3 = d[3];
-                            try { sendData = JSON.parse(sendData);}catch (e) { }
-                            try {sendData2 = JSON.parse(sendData2);}catch (e) { }
-                            try {sendData3 = JSON.parse(sendData3);}catch (e) { }
-                            sockets[id].oldEmit(evt, sendData,sendData2,sendData3);
-                        }
-                        
                     });
                     rawsockets[sockets[id].id].on('error', function (error) {
                         if(sockets[id]){
@@ -237,23 +210,25 @@ var _f = {
                     });
                     sockets[id].on('msg', function (event,data,data2,data3) {
                         var strConst = `${event}${brStr}`
-                        try {
-                            data = JSON.stringify(data);
-                        } catch (e) { }
-                        strConst += `${data}`;
-                        if (data2) {
+                        if(data){
                             try {
-                                data2 = JSON.stringify(data2);
+                                data = JSON.stringify(data);
+                                strConst += `${data}`;
+                                if (data2) {
+                                    try {
+                                        data2 = JSON.stringify(data2);
+                                    } catch (e) { }
+                                    strConst += `${brStr}${data2}`;
+                                }
+                                if (data3) {
+                                    try {
+                                        data3 = JSON.stringify(data3);
+                                    } catch (e) { }
+                                    strConst += `${brStr}${data3}`;
+                                }
                             } catch (e) { }
-                            strConst += `${brStr}${data2}`;
                         }
-                        if (data3) {
-                            try {
-                                data3 = JSON.stringify(data3);
-                            } catch (e) { }
-                            strConst += `${brStr}${data3}`;
-                        }
-
+                        
                         rawsockets[sockets[id].id].write( sc + strConst + ec) ;
                     });
                     self.oldEmit('connection', sockets[id]);              
