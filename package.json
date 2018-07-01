@@ -12,5 +12,5 @@
   "license": "GPLv3",
   "main": "tcp-emit-server.js",
   "name": "tcp-emit-server",
-  "version": "0.0.2"
+  "version": "0.0.3"
 }
